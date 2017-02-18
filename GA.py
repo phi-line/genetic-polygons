@@ -5,12 +5,13 @@ from copy import deepcopy
 from operator import itemgetter
 
 class GA:
-   def __init__(self):
-      self.RADIUS = 1
-      self.DO_MUTATE = True
-      self.MUTATION_RATE = .25 # rate in which pop will be mutated
-      self.MUTATION_AMT = 5 # +/- random range for mutation
+   RADIUS = 1
+   DEG_SIG = 5
+   DO_MUTATE = True
+   MUTATION_RATE = .25  # rate in which pop will be mutated
+   MUTATION_AMT = 5  # +/- random range for mutation
 
+   def __init__(self):
       self.gen_count = 1
       self.current_gen = []
       self.best_polygon = []
@@ -21,19 +22,25 @@ class GA:
       returns a list with a series of three theta radius pairs
       :return: list[ [0,R], [0,R], [0,R]
       '''
-
-      rand_angles = [randrange(0, 360), randrange(0, 360), randrange(0, 360)]
+      cir = 360.0
+      rand_angles = GA.gen_pairs(cir)
       while(rand_angles[0] == rand_angles[1] or
             rand_angles[0] == rand_angles[2] or
             rand_angles[1] == rand_angles[2]):
-         rand_angles = [randrange(0, 360), randrange(0, 360), randrange(0, 360)]
-
-      rand_angles.sort()
+         rand_angles = GA.gen_pairs(cir)
 
       vertz = []
       for i in range(0, len(rand_angles)):
          vertz.append([rand_angles[i],self.RADIUS])
       return vertz
+
+   @staticmethod
+   def gen_pairs(angle):
+      pairs = [uniform(0, angle), uniform(0, angle), uniform(0, angle)]
+      for i in range(0, len(pairs)):
+         pairs[i] = round(pairs[i],GA.DEG_SIG)
+      pairs.sort()
+      return pairs
 
    def pop(self, size):
       '''
@@ -167,7 +174,7 @@ def main():
    seed()
    ga = GA()
 
-   p = ga.pop(1000)
+   p = ga.pop(100)
    for i in p:
       # print(i)
       pass
@@ -186,7 +193,7 @@ def main():
       # print(i)
       pass
    count = 0
-   exptime = 100
+   exptime = 1000
    while (GA.getFitness(new_gen) > 0.001) and count <= exptime:
       new_gen = ga.propagate_gen(p)
       count += 1
