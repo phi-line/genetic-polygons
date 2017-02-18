@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from random import randint, randrange, sample, seed
+from random import *
 from copy import deepcopy
 from operator import itemgetter
 
@@ -142,18 +142,17 @@ class GA:
       return polygon
 
    def mutation(self, gen):
-      infect_rate = randrange(0,1.000)
-      if infect_rate < self.MUTATION_RATE:
-         for i in range(0,infect_rate*len(gen)):
-            index = randrange(0, len(gen))
-            GA.infect(gen[index])
+      infect_rate = uniform(0,self.MUTATION_RATE)
+      for i in range(0, int(infect_rate* len(gen)) ):
+         index = randrange(0, len(gen))
+         self.infect(gen[index])
 
-   @staticmethod
-   def infect(polygon):
+
+   def infect(self, polygon):
       pairs_len = len(polygon) - 1
       for i in range (0, pairs_len):
          index = randrange(0, pairs_len)
-         polygon[index][0] += randint(-GA.MUTATION_AMT, GA.MUTATION_AMT)
+         polygon[index][0] += randint(-self.MUTATION_AMT, self.MUTATION_AMT)
          if polygon[index][0] >= 360:
             polygon[index][0] -= 360
          elif polygon[index][0] < 0:
@@ -168,27 +167,32 @@ def main():
    seed()
    ga = GA()
 
-   p = ga.pop(5)
+   p = ga.pop(1000)
    for i in p:
-      print(i)
+      # print(i)
+      pass
 
    print("\n")
 
    p = ga.selection(p)
    for i in p:
-      print(i)
+      # print(i)
+      pass
 
    print("\n")
 
    new_gen = ga.propagate_gen(p)
    for i in new_gen:
-      print(i)
+      # print(i)
+      pass
    count = 0
-   while (GA.getFitness(new_gen) > 0.001) and count <= 1000:
+   exptime = 100
+   while (GA.getFitness(new_gen) > 0.001) and count <= exptime:
       new_gen = ga.propagate_gen(p)
-      print(new_gen[0])
       count += 1
-      print("\n GENERATION " + str(count))
+      if(count % (exptime/10) == 0):
+         print(new_gen[0])
+         print("\n GENERATION " + str(count))
 
 
 
