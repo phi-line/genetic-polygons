@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 
-from random import randint, randrange, sample
+from random import randint, randrange, sample, seed
 from copy import deepcopy
 from operator import itemgetter
 
 class GA:
    def __init__(self):
       self.RADIUS = 1
+      self.DO_MUTATE = True
+      self.MUTATION_RATE = .25 # rate in which pop will be mutated
+      self.MUTATION_AMT = 5 # +/- random range for mutation
+
       self.gen_count = 1
-      #self.current_gen = []
+      self.current_gen = []
       self.best_polygon = []
       self.best_fitness = 0
 
@@ -18,11 +22,11 @@ class GA:
       :return: list[ [0,R], [0,R], [0,R]
       '''
 
-      rand_angles = [randint(0, 360), randint(0, 360), randint(0, 360)]
+      rand_angles = [randrange(0, 360), randrange(0, 360), randrange(0, 360)]
       while(rand_angles[0] == rand_angles[1] or
             rand_angles[0] == rand_angles[2] or
             rand_angles[1] == rand_angles[2]):
-         rand_angles = [randint(0, 360), randint(0, 360), randint(0, 360)]
+         rand_angles = [randrange(0, 360), randrange(0, 360), randrange(0, 360)]
 
       rand_angles.sort()
 
@@ -91,6 +95,8 @@ class GA:
       for i in range(1, len(pop)):
          new_pop[i] = self.splice_polygon(pop[i-1], pop[i])
          new_pop = GA.sortByFitness(new_pop)
+      if self.DO_MUTATE:
+         self.mutation(new_pop)
       return new_pop
 
    @staticmethod
@@ -102,15 +108,13 @@ class GA:
          setA.add(i)
       index = sample(setA, pairs_len)
       # needs to be dynamic
-      new_polygon[0][0] = polygonA[index[0]][0]
-      new_polygon[1][0] = polygonA[index[1]][0]
-      new_polygon[2][0] = polygonB[index[2]][0]
-      pairs = []
-      for i in range(0, pairs_len):
-         pairs.append(new_polygon[i])
-      pairs = sorted(pairs, key = itemgetter(0))
-      for i in range(0, pairs_len):
-         new_polygon[i] = pairs[i]
+      count = int(len(new_polygon)/2) # 3
+      for i in range(0, pairs_len - count):
+         new_polygon[i][0] = polygonA[index[i]][0]
+      for i in range(0, count):
+         new_polygon[i][0] = polygonB[index[i]][0]
+      # sorts pairs and recomputes fitness
+      GA.sortPairs(new_polygon)
       new_polygon[pairs_len] = GA.fitness(new_polygon)
       return new_polygon
 
@@ -126,14 +130,42 @@ class GA:
    def sortByFitness(gen):
       return sorted(gen, key = itemgetter(3))
 
-   def mutation(self):
-      pass
+   @staticmethod
+   def sortPairs(polygon):
+      pairs = []
+      pairs_len = len(polygon) - 1
+      for i in range(0, pairs_len):
+         pairs.append(polygon[i])
+      pairs = sorted(pairs)
+      for i in range(0, pairs_len):
+         polygon[i] = pairs[i]
+      return polygon
+
+   def mutation(self, gen):
+      infect_rate = randrange(0,1.000)
+      if infect_rate < self.MUTATION_RATE:
+         for i in range(0,infect_rate*len(gen)):
+            index = randrange(0, len(gen))
+            GA.infect(gen[index])
+
+   @staticmethod
+   def infect(polygon):
+      pairs_len = len(polygon) - 1
+      for i in range (0, pairs_len):
+         index = randrange(0, pairs_len)
+         polygon[index][0] += randint(-GA.MUTATION_AMT, GA.MUTATION_AMT)
+         if polygon[index][0] >= 360:
+            polygon[index][0] -= 360
+         elif polygon[index][0] < 0:
+            polygon[index][0] += 360
+      return GA.sortPairs(polygon)
 
 def main():
    '''
    test code for genetic algo
    :return:
    '''
+   seed()
    ga = GA()
 
    p = ga.pop(5)
