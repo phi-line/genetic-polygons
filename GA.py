@@ -46,16 +46,18 @@ class GA:
       :param polygon:
       :return:
       '''
-      '''
       thetaA = polygon[0][0]+(360-polygon[2][0])
       thetaB = polygon[1][0] - polygon[0][0]
       thetaC = polygon[2][0] - polygon[1][0]
-      '''
 
+      thetaA = abs(thetaA - 120)
+      thetaB = abs(thetaB - 120)
+      thetaC = abs(thetaC - 120)
+      '''
       thetaA = 120 - abs(polygon[0][0] - polygon[2][0])
       thetaB = 120 - abs(polygon[1][0] - polygon[0][0])
       thetaC = 120 - abs(polygon[2][0] - polygon[1][0])
-
+      '''
       sum = thetaA + thetaB + thetaC
       return round(abs(sum/360.0), 3)
 
@@ -134,7 +136,7 @@ def main():
    '''
    ga = GA()
 
-   p = ga.pop(10)
+   p = ga.pop(5)
    for i in p:
       print(i)
 
@@ -150,7 +152,7 @@ def main():
    for i in new_gen:
       print(i)
    count = 0
-   while GA.getFitness(new_gen) > 0.001:
+   while (GA.getFitness(new_gen) > 0.001) and count <= 1000:
       new_gen = ga.propagate_gen(p)
       print(new_gen[0])
       count += 1
