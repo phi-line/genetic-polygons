@@ -17,37 +17,42 @@ class GUI(tk.Canvas):
         self.pack()
 
     def display_individual(self,dataset):
+        tk.Canvas.delete(self,"all")
         individual=[]
         for coord in dataset[0]:
             individual.append(coord[0])
             individual.append(coord[1])
         self.draw_polygon(individual)
-
-    def draw_polygon(self, individual):
-        fix_A = individual[0]-90
-        A = [individual[0],individual[1]]
-        A = self.convert_to_canvas_coords(A,fix_A)
-
-        B = [individual[2], individual[3]]
-        B = self.convert_to_canvas_coords(B,fix_A)
-
-        C = [individual[4], individual[5]]
-        C = self.convert_to_canvas_coords(C,fix_A)
-
-        converted_coords=[A[0],A[1],B[0],B[1],C[0],C[1]]
-
-        self.create_circle(self.canvas_origin_x,self.canvas_origin_y,self.std_rad,fill="white",outline="#000", width=2)
-        self.create_polygon(converted_coords,outline='red',fill='white',width=2)
+        self.create_text(self.canvas_origin_x, self.canvas_origin_y, fill='black', text=dataset[1])
 
         tk.Canvas.update_idletasks(self)
         tk.Canvas.update(self)
 
-    def convert_to_canvas_coords(self,coord,fix_A):
-        coord[0] -= fix_A
-        coord[0] = (coord[0]*2*math.pi)/360
+    def draw_polygon(self, individual):
+        fix_A = individual[0] - 90
+        A = [individual[0], individual[1]]
+        A = self.convert_to_canvas_coords(A, fix_A)
 
-        cart_x = coord[1]*math.cos(coord[0])
-        cart_y = coord[1]*math.sin(coord[0])
+        B = [individual[2], individual[3]]
+        B = self.convert_to_canvas_coords(B, fix_A)
+
+        C = [individual[4], individual[5]]
+        C = self.convert_to_canvas_coords(C, fix_A)
+
+        converted_coords = [A[0], A[1], B[0], B[1], C[0], C[1]]
+
+        self.create_circle(self.canvas_origin_x, self.canvas_origin_y, self.std_rad, fill="white", outline="#000",width=2)
+        self.create_polygon(converted_coords, outline='red', fill='white', width=2)
+
+        tk.Canvas.update_idletasks(self)
+        tk.Canvas.update(self)
+
+    def convert_to_canvas_coords(self, coord, fix_A):
+        coord[0] -= fix_A
+        coord[0] = (coord[0] * 2 * math.pi) / 360
+
+        cart_x = coord[1] * math.cos(coord[0])
+        cart_y = coord[1] * math.sin(coord[0])
 
         pixel_x = self.canvas_origin_x + (cart_x * self.std_rad)
         pixel_y = self.canvas_origin_y - (cart_y * self.std_rad)
@@ -67,13 +72,12 @@ def draw(scale):
     r1 = 0
     r2 = scale
     r3 = scale + scale
-    TEST_individual = [[[r1, 1], [r2, 1], [r3, 1]], 0.5]
-    #TEST_individual = [[[78, 1], [198, 1], [319, 1]], 0.5]
+    TEST_individual = [[[r1, 1], [r2, 1], [r3, 1]], scale]
 
     polygon.display_individual(TEST_individual)
 
 derp = 1
-while 1:
+while derp < 1800:
     draw(derp)
     derp += 1
 
