@@ -3,6 +3,7 @@
 from random import *
 from copy import deepcopy
 from operator import itemgetter
+from math import *
 
 class GA:
    RADIUS = 1
@@ -32,13 +33,13 @@ class GA:
       '''
       cir = 360.0
       rand_angles = GA.gen_pairs(cir)
-      #formattedRandAngles = GA.convertFitPolygon(rand_angles)
+      formattedRandAngles = GA.convertFitPolygon(rand_angles)
       while(rand_angles[0] == rand_angles[1] or
             rand_angles[0] == rand_angles[2] or
-            rand_angles[1] == rand_angles[2]):# or
-            #self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
+            rand_angles[1] == rand_angles[2] or
+            self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
          rand_angles = GA.gen_pairs(cir)
-         #formattedRandAngles = GA.convertFitPolygon(rand_angles)
+         formattedRandAngles = GA.convertFitPolygon(rand_angles)
 
       vertz = []
       for i in range(0, len(rand_angles)):
@@ -68,21 +69,45 @@ class GA:
       :param polygon:
       :return:
       '''
-      thetaA = polygon[0][0]+(360-polygon[2][0])
-      thetaB = polygon[1][0] - polygon[0][0]
-      thetaC = polygon[2][0] - polygon[1][0]
+      poly = deepcopy(polygon)
+
+      thetaA = poly[0][0]+(360-poly[2][0])
+      thetaB = poly[1][0] - poly[0][0]
+      thetaC = poly[2][0] - poly[1][0]
 
       thetaA = abs(thetaA - 120)
       thetaB = abs(thetaB - 120)
       thetaC = abs(thetaC - 120)
-      '''
-      thetaA = 120 - abs(polygon[0][0] - polygon[2][0])
-      thetaB = 120 - abs(polygon[1][0] - polygon[0][0])
-      thetaC = 120 - abs(polygon[2][0] - polygon[1][0])
-      '''
-      sum = thetaA + thetaB + thetaC
-      return round(abs(sum/360.0), GA.FIT_SIG)
+      angle_sum = thetaA + thetaB + thetaC
+      angle_sum = angle_sum/360.0
 
+      coordA = GA.convert_to_canvas_coords(poly[0])
+      coordB = GA.convert_to_canvas_coords(poly[1])
+      coordC = GA.convert_to_canvas_coords(poly[2])
+
+      AB = GA.mag(coordA[0], coordB[0], coordA[1], coordB[1])
+      BC = GA.mag(coordB[0], coordC[0], coordB[1], coordC[1])
+      CA = GA.mag(coordC[0], coordA[0], coordC[1], coordA[1])
+      side_list = sorted([AB, BC, CA], reverse=True)
+      side_avg = 1 - (side_list[1] + side_list[2]) / (2 * side_list[0])
+
+      total_sum =round(side_avg * 0.0 +
+                        angle_sum * 1.0, GA.FIT_SIG)
+
+      #return round(angle_sum, GA.FIT_SIG)
+      return total_sum
+
+   @staticmethod
+   def convert_to_canvas_coords(coord):
+      coord[0] = (coord[0] * 2 * pi) / 360
+
+      cart_x = coord[1] * cos(coord[0])
+      cart_y = coord[1] * sin(coord[0])
+      return [cart_x, cart_y]
+
+   @staticmethod
+   def mag(x1, x2, y1, y2):
+      return sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
    def selection(self, pop):
       '''
@@ -191,3 +216,42 @@ class GA:
             polygon[index][0] += 360
       return GA.sortPairs(polygon)
 
+def main():
+   '''
+   test code for genetic algo
+   :return:
+   '''
+   seed()
+   ga = GA()
+
+   p = ga.pop(100)
+   for i in p:
+      # print(i)
+      pass
+
+   print("\n")
+
+   p = ga.selection(p)
+   for i in p:
+      # print(i)
+      pass
+
+   print("\n")
+
+   new_gen = ga.propagate_gen(p)
+   for i in new_gen:
+      # print(i)
+      pass
+   count = 0
+   exptime = 1000
+   while (GA.getFitness(new_gen) > 0.001) and count <= exptime:
+      new_gen = ga.propagate_gen(p)
+      count += 1
+      if(count % (exptime/10) == 0):
+         print(new_gen[0])
+         print("\n GENERATION " + str(count))
+
+
+
+if __name__ == '__main__':
+   main()
