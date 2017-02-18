@@ -24,14 +24,15 @@ class GUI(tk.Canvas):
         self.draw_polygon(individual)
 
     def draw_polygon(self, individual):
+        fix_A = individual[0]-90
         A = [individual[0],individual[1]]
-        A = self.convert_to_canvas_coords(A)
+        A = self.convert_to_canvas_coords(A,fix_A)
 
         B = [individual[2], individual[3]]
-        B = self.convert_to_canvas_coords(B)
+        B = self.convert_to_canvas_coords(B,fix_A)
 
         C = [individual[4], individual[5]]
-        C = self.convert_to_canvas_coords(C)
+        C = self.convert_to_canvas_coords(C,fix_A)
 
         converted_coords=[A[0],A[1],B[0],B[1],C[0],C[1]]
 
@@ -41,7 +42,8 @@ class GUI(tk.Canvas):
         tk.Canvas.update_idletasks(self)
         tk.Canvas.update(self)
 
-    def convert_to_canvas_coords(self,coord):
+    def convert_to_canvas_coords(self,coord,fix_A):
+        coord[0] -= fix_A
         coord[0] = (coord[0]*2*math.pi)/360
 
         cart_x = coord[1]*math.cos(coord[0])

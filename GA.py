@@ -7,15 +7,22 @@ from operator import itemgetter
 class GA:
    RADIUS = 1
    DEG_SIG = 5
-   DO_MUTATE = True
-   MUTATION_RATE = .25  # rate in which pop will be mutated
+   DO_MUTATE = False
+   MUTATION_RATE = .1  # rate in which pop will be mutated
    MUTATION_AMT = 5  # +/- random range for mutation
+   BAD_SAMPLE_RATE = 0.1
 
    def __init__(self):
       self.gen_count = 1
       self.current_gen = []
       self.best_polygon = []
       self.best_fitness = 0
+
+   @staticmethod
+   def convertFitPolygon(simplyPolygon):
+      return [ [simplyPolygon[0], GA.RADIUS],
+               [simplyPolygon[1], GA.RADIUS],
+               [simplyPolygon[2], GA.RADIUS] ]
 
    def polygon(self):
       '''
@@ -24,10 +31,13 @@ class GA:
       '''
       cir = 360.0
       rand_angles = GA.gen_pairs(cir)
+      formattedRandAngles = GA.convertFitPolygon(rand_angles)
       while(rand_angles[0] == rand_angles[1] or
             rand_angles[0] == rand_angles[2] or
-            rand_angles[1] == rand_angles[2]):
+            rand_angles[1] == rand_angles[2] or
+            self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
          rand_angles = GA.gen_pairs(cir)
+         formattedRandAngles = GA.convertFitPolygon(rand_angles)
 
       vertz = []
       for i in range(0, len(rand_angles)):
@@ -104,6 +114,9 @@ class GA:
          new_pop = GA.sortByFitness(new_pop)
       if self.DO_MUTATE:
          self.mutation(new_pop)
+      self.current_gen = new_pop
+      self.best_polygon = new_pop[0]
+      self.best_fitness = new_pop[0][len(new_pop[0]) - 1]
       return new_pop
 
    @staticmethod
@@ -148,6 +161,10 @@ class GA:
          polygon[i] = pairs[i]
       return polygon
 
+   @staticmethod
+   def convertPolygon(polygon):
+      return [[polygon[0], polygon[1], polygon[2]], polygon[3]]
+
    def mutation(self, gen):
       infect_rate = uniform(0,self.MUTATION_RATE)
       for i in range(0, int(infect_rate* len(gen)) ):
@@ -166,42 +183,3 @@ class GA:
             polygon[index][0] += 360
       return GA.sortPairs(polygon)
 
-def main():
-   '''
-   test code for genetic algo
-   :return:
-   '''
-   seed()
-   ga = GA()
-
-   p = ga.pop(100)
-   for i in p:
-      # print(i)
-      pass
-
-   print("\n")
-
-   p = ga.selection(p)
-   for i in p:
-      # print(i)
-      pass
-
-   print("\n")
-
-   new_gen = ga.propagate_gen(p)
-   for i in new_gen:
-      # print(i)
-      pass
-   count = 0
-   exptime = 1000
-   while (GA.getFitness(new_gen) > 0.001) and count <= exptime:
-      new_gen = ga.propagate_gen(p)
-      count += 1
-      if(count % (exptime/10) == 0):
-         print(new_gen[0])
-         print("\n GENERATION " + str(count))
-
-
-
-if __name__ == '__main__':
-   main()
