@@ -7,10 +7,11 @@ from operator import itemgetter
 class GA:
    RADIUS = 1
    DEG_SIG = 5
-   DO_MUTATE = False
-   MUTATION_RATE = .1  # rate in which pop will be mutated
-   MUTATION_AMT = 5  # +/- random range for mutation
-   BAD_SAMPLE_RATE = 0.1
+   FIT_SIG = 5
+   DO_MUTATE = True
+   MUTATION_RATE = .2  # rate in which pop will be mutated
+   MUTATION_AMT = 10.0  # +/- random range for mutation
+   BAD_SAMPLE_RATE = 0
 
    def __init__(self):
       self.gen_count = 1
@@ -31,13 +32,13 @@ class GA:
       '''
       cir = 360.0
       rand_angles = GA.gen_pairs(cir)
-      formattedRandAngles = GA.convertFitPolygon(rand_angles)
+      #formattedRandAngles = GA.convertFitPolygon(rand_angles)
       while(rand_angles[0] == rand_angles[1] or
             rand_angles[0] == rand_angles[2] or
-            rand_angles[1] == rand_angles[2] or
-            self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
+            rand_angles[1] == rand_angles[2]):# or
+            #self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
          rand_angles = GA.gen_pairs(cir)
-         formattedRandAngles = GA.convertFitPolygon(rand_angles)
+         #formattedRandAngles = GA.convertFitPolygon(rand_angles)
 
       vertz = []
       for i in range(0, len(rand_angles)):
@@ -80,7 +81,7 @@ class GA:
       thetaC = 120 - abs(polygon[2][0] - polygon[1][0])
       '''
       sum = thetaA + thetaB + thetaC
-      return round(abs(sum/360.0), 3)
+      return round(abs(sum/360.0), GA.FIT_SIG)
 
 
    def selection(self, pop):
@@ -109,9 +110,16 @@ class GA:
       :return:
       '''
       new_pop = deepcopy(pop)
+      # for i in range(1, len(pop)):
+      #    new_pop[i] = self.splice_polygon(pop[i-1], pop[i])
+      #    new_pop = GA.sortByFitness(new_pop)
+      pop_set = set()
+      for i in range(0, len(pop)):
+         pop_set.add(i)
+      index = sample(pop_set, len(pop)) #gen unique numbers n - len(pop)
       for i in range(1, len(pop)):
-         new_pop[i] = self.splice_polygon(pop[i-1], pop[i])
-         new_pop = GA.sortByFitness(new_pop)
+         new_pop[i] = self.splice_polygon(pop[index[i-1]], pop[index[i]])
+
       if self.DO_MUTATE:
          self.mutation(new_pop)
       self.current_gen = new_pop
@@ -176,7 +184,7 @@ class GA:
       pairs_len = len(polygon) - 1
       for i in range (0, pairs_len):
          index = randrange(0, pairs_len)
-         polygon[index][0] += randint(-self.MUTATION_AMT, self.MUTATION_AMT)
+         polygon[index][0] += uniform(-self.MUTATION_AMT, self.MUTATION_AMT)
          if polygon[index][0] >= 360:
             polygon[index][0] -= 360
          elif polygon[index][0] < 0:

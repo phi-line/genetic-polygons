@@ -17,14 +17,14 @@ def main():
    seed()
    ga = GA()
 
-   p = ga.pop(500)
+   p = ga.pop(100)
    p = ga.selection(p)
    new_gen = ga.propagate_gen(p)
    for i in new_gen:
       # print(i)
       pass
    count = 0
-   exptime = 500
+   exptime = 1000
    while (GA.getFitness(new_gen) > 0.001) and count <= exptime:
       new_gen = ga.propagate_gen(p)
       count += 1
