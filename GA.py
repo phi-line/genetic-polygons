@@ -13,6 +13,7 @@ class GA:
    MUTATION_RATE = .2  # rate in which pop will be mutated
    MUTATION_AMT = 5.0  # +/- random range for mutation
    BAD_SAMPLE_RATE = 0.8
+   DIFF_ANGLE = 1
 
    def __init__(self):
       self.gen_count = 1
@@ -34,9 +35,10 @@ class GA:
       cir = 360.0
       rand_angles = GA.gen_pairs(cir)
       formattedRandAngles = GA.convertFitPolygon(rand_angles)
-      while(rand_angles[0] == rand_angles[1] or
-            rand_angles[0] == rand_angles[2] or
-            rand_angles[1] == rand_angles[2] or
+
+      while(abs(rand_angles[0] - rand_angles[1]) <= GA.DIFF_ANGLE or
+            abs(rand_angles[0] - rand_angles[2]) <= GA.DIFF_ANGLE or
+            abs(rand_angles[1] - rand_angles[2]) <= GA.DIFF_ANGLE or
          self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
          rand_angles = GA.gen_pairs(cir)
          formattedRandAngles = GA.convertFitPolygon(rand_angles)
@@ -78,10 +80,7 @@ class GA:
       thetaB = abs(thetaB - 120)
       thetaC = abs(thetaC - 120)
       angle_sum = thetaA + thetaB + thetaC
-      angle_sum = angle_sum/360.0
-
-      #if(angle_sum >= 1.34):
-      #  print("ERROR")
+      angle_sum = angle_sum/480.0
 
       '''
       coordA = GA.convert_to_canvas_coords(poly[0])

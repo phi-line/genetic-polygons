@@ -29,10 +29,7 @@ def main():
          p = ga.selection(p)
          p = ga.propagate_gen(p)
          count += 1
-         #if (count % (exptime / 10) == 0):
-         #print(new_gen[0])
          gui.display_individual(GA.convertPolygon(ga.best_polygon))
          time.sleep(0.03)
-         #print("\n GENERATION " + str(count))
 
 main()
