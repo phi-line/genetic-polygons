@@ -23,6 +23,9 @@ class GUI(tk.Canvas):
             individual.append(coord[0])
             individual.append(coord[1])
         self.draw_polygon(individual)
+        dataset[1] *= 100
+        dataset[1] = round(dataset[1], 2)
+        dataset[1] = str(dataset[1]) + "%"
         self.create_text(self.canvas_origin_x, self.canvas_origin_y, fill='black', text=dataset[1])
 
         tk.Canvas.update_idletasks(self)

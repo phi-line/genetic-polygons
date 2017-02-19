@@ -11,8 +11,8 @@ class GA:
    FIT_SIG = 5
    DO_MUTATE = True
    MUTATION_RATE = .2  # rate in which pop will be mutated
-   MUTATION_AMT = 10.0  # +/- random range for mutation
-   BAD_SAMPLE_RATE = 0
+   MUTATION_AMT = 5.0  # +/- random range for mutation
+   BAD_SAMPLE_RATE = 0.8
 
    def __init__(self):
       self.gen_count = 1
@@ -37,10 +37,9 @@ class GA:
       while(rand_angles[0] == rand_angles[1] or
             rand_angles[0] == rand_angles[2] or
             rand_angles[1] == rand_angles[2] or
-            self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
+         self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
          rand_angles = GA.gen_pairs(cir)
          formattedRandAngles = GA.convertFitPolygon(rand_angles)
-
       vertz = []
       for i in range(0, len(rand_angles)):
          vertz.append([rand_angles[i],self.RADIUS])
@@ -81,6 +80,10 @@ class GA:
       angle_sum = thetaA + thetaB + thetaC
       angle_sum = angle_sum/360.0
 
+      #if(angle_sum >= 1.34):
+      #  print("ERROR")
+
+      '''
       coordA = GA.convert_to_canvas_coords(poly[0])
       coordB = GA.convert_to_canvas_coords(poly[1])
       coordC = GA.convert_to_canvas_coords(poly[2])
@@ -89,13 +92,14 @@ class GA:
       BC = GA.mag(coordB[0], coordC[0], coordB[1], coordC[1])
       CA = GA.mag(coordC[0], coordA[0], coordC[1], coordA[1])
       side_list = sorted([AB, BC, CA], reverse=True)
-      side_avg = 1 - (side_list[1] + side_list[2]) / (2 * side_list[0])
+      '''
+      #side_avg = 1 - (side_list[1] + side_list[2]) / (2 * side_list[0])
 
-      total_sum =round(side_avg * 0.0 +
-                        angle_sum * 1.0, GA.FIT_SIG)
+      #total_sum =round(side_avg * 1.0 +
+       #                 angle_sum * 0.9, GA.FIT_SIG)
 
-      #return round(angle_sum, GA.FIT_SIG)
-      return total_sum
+      return round(angle_sum, GA.FIT_SIG)
+      #return total_sum
 
    @staticmethod
    def convert_to_canvas_coords(coord):
@@ -216,17 +220,18 @@ class GA:
             polygon[index][0] += 360
       return GA.sortPairs(polygon)
 
+'''
 def main():
-   '''
-   test code for genetic algo
-   :return:
-   '''
+
+   #test code for genetic algo
+   #:return:
+
    seed()
    ga = GA()
 
-   p = ga.pop(100)
+   p = ga.pop(500)
    for i in p:
-      # print(i)
+      #print(i)
       pass
 
    print("\n")
@@ -243,7 +248,7 @@ def main():
       # print(i)
       pass
    count = 0
-   exptime = 1000
+   exptime = 100000
    while (GA.getFitness(new_gen) > 0.001) and count <= exptime:
       new_gen = ga.propagate_gen(p)
       count += 1
@@ -255,3 +260,4 @@ def main():
 
 if __name__ == '__main__':
    main()
+'''
