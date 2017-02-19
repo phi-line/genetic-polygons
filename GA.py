@@ -13,7 +13,7 @@ class GA:
    MUTATION_RATE = .2  # rate in which pop will be mutated
    MUTATION_AMT = 5.0  # +/- random range for mutation
    BAD_SAMPLE_RATE = 0.8
-   DIFF_ANGLE = 1
+   DIFF_ANGLE = 0.5
 
    def __init__(self):
       self.gen_count = 1

@@ -7,7 +7,10 @@ from GA import GA
 from random import *
 import time
 
-def main():
+DELAY = 0.03
+DEMO = True
+
+def runGA(demo = False):
    '''
    test code for genetic algo
    :return:
@@ -22,6 +25,8 @@ def main():
    p = ga.selection(p)
    p = ga.propagate_gen(p)
 
+   t = time.time()
+
    count = 0
    exptime = 10000
    while (count <= exptime):
@@ -29,7 +34,28 @@ def main():
          p = ga.selection(p)
          p = ga.propagate_gen(p)
          count += 1
-         gui.display_individual(GA.convertPolygon(ga.best_polygon))
-         time.sleep(0.03)
+         if(demo):
+            gui.display_individual(GA.convertPolygon(ga.best_polygon))
+            time.sleep(DELAY)
+      else:
+         if(not demo):
+            break
+
+   return [ (time.time() - t), count]
+
+
+def main():
+   if(DEMO):
+      runGA(True)
+
+   else:
+      avg = 0.0
+      run = 100
+      for i in range(0, run):
+         res = runGA(False)
+         timeSpent = res[0] + res[1] * DELAY
+         avg += timeSpent
+         print(timeSpent)
+      print("average", avg/run)
 
 main()
