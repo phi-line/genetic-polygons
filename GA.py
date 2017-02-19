@@ -122,12 +122,6 @@ class GA:
          fitVal = self.fitness(pop[i])
          pop[i] = [pop[i][0], pop[i][1], pop[i][2], fitVal]
 
-      '''
-      print("selection:pop:")
-      for p in pop:
-         print(p)
-      print("End---")
-      '''
       return sorted(pop, key = itemgetter(3))
 
    def propagate_gen(self, pop):
@@ -219,44 +213,4 @@ class GA:
             polygon[index][0] += 360
       return GA.sortPairs(polygon)
 
-'''
-def main():
 
-   #test code for genetic algo
-   #:return:
-
-   seed()
-   ga = GA()
-
-   p = ga.pop(500)
-   for i in p:
-      #print(i)
-      pass
-
-   print("\n")
-
-   p = ga.selection(p)
-   for i in p:
-      # print(i)
-      pass
-
-   print("\n")
-
-   new_gen = ga.propagate_gen(p)
-   for i in new_gen:
-      # print(i)
-      pass
-   count = 0
-   exptime = 100000
-   while (GA.getFitness(new_gen) > 0.001) and count <= exptime:
-      new_gen = ga.propagate_gen(p)
-      count += 1
-      if(count % (exptime/10) == 0):
-         print(new_gen[0])
-         print("\n GENERATION " + str(count))
-
-
-
-if __name__ == '__main__':
-   main()
-'''
