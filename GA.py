@@ -10,7 +10,7 @@ class GA:
    DEG_SIG = 5
    FIT_SIG = 5
    DO_MUTATE = True
-   MUTATION_RATE = .2  # rate in which pop will be mutated
+   MUTATION_RATE = .15  # rate in which pop will be mutated
    MUTATION_AMT = 5.0  # +/- random range for mutation
    BAD_SAMPLE_RATE = 0.8
    DIFF_ANGLE = 0.5
@@ -64,6 +64,13 @@ class GA:
       return [self.polygon() for x in range(size)]
 
    @staticmethod
+   def diffAngle(fAngle, sAngle):
+      diff = abs(fAngle - sAngle)
+      if(diff > 180):
+         return abs(360 - diff)
+      return diff
+
+   @staticmethod
    def fitness(polygon):
       '''
       returns a fitness for an polygon
@@ -72,15 +79,19 @@ class GA:
       '''
       poly = deepcopy(polygon)
 
-      thetaA = poly[0][0]+(360-poly[2][0])
-      thetaB = poly[1][0] - poly[0][0]
-      thetaC = poly[2][0] - poly[1][0]
+      #thetaA = poly[0][0]+(360-poly[2][0])
+      #thetaB = poly[1][0] - poly[0][0]
+      #thetaC = poly[2][0] - poly[1][0]
+
+      thetaA = GA.diffAngle(poly[0][0], poly[2][0])
+      thetaB = GA.diffAngle(poly[1][0], poly[0][0])
+      thetaC = GA.diffAngle(poly[2][0], poly[1][0])
 
       thetaA = abs(thetaA - 120)
       thetaB = abs(thetaB - 120)
       thetaC = abs(thetaC - 120)
       angle_sum = thetaA + thetaB + thetaC
-      angle_sum = angle_sum/480.0
+      angle_sum = angle_sum/360.0
 
       '''
       coordA = GA.convert_to_canvas_coords(poly[0])

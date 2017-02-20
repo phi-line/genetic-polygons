@@ -7,7 +7,7 @@ from GA import GA
 from random import *
 import time
 
-DELAY = 0.03
+DELAY = 0.01
 DEMO = True
 
 def runGA(demo = False):
@@ -30,7 +30,7 @@ def runGA(demo = False):
    count = 0
    exptime = 10000
    while (count <= exptime):
-      if(GA.getFitness(p) > 0.025):
+      if(ga.best_polygon[3] > 2.0/100.0):
          p = ga.selection(p)
          p = ga.propagate_gen(p)
          count += 1
@@ -41,7 +41,7 @@ def runGA(demo = False):
          if(not demo):
             break
 
-   return [ (time.time() - t), count]
+   return [ (time.time() - t), count, ga.best_fitness]
 
 
 def main():
@@ -49,13 +49,18 @@ def main():
       runGA(True)
 
    else:
-      avg = 0.0
-      run = 100
+      avgTime = 0.0
+      avgError = 0.0
+      run = 10
       for i in range(0, run):
          res = runGA(False)
          timeSpent = res[0] + res[1] * DELAY
-         avg += timeSpent
-         print(timeSpent)
-      print("average", avg/run)
+         avgTime += timeSpent
+         avgError += res[2]*100.0
+         print("time spent(s):", round(timeSpent, 2))
+         print("error:", round(res[2]*100.0, 2), "%")
+      print("average time(s):", round(avgTime/run, 2))
+      print("average error:", round(avgError/run, 2), "%")
+
 
 main()
