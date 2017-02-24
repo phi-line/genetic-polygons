@@ -12,7 +12,7 @@ class GA:
    DO_MUTATE = True
    MUTATION_RATE = .15  # rate in which pop will be mutated
    MUTATION_AMT = .05  # +/- random range for mutation
-   BAD_SAMPLE_RATE = 0.8
+   BAD_SAMPLE_RATE = 0.95
    DIFF_ANGLE = 0.005
 
    def __init__(self, verts = 3):
@@ -41,16 +41,23 @@ class GA:
       rand_angles = self.gen_pairs(cir)
       formattedRandAngles = GA.convertFitPolygon(rand_angles)
 
-      while(abs(rand_angles[0] - rand_angles[1]) <= GA.DIFF_ANGLE or
-            abs(rand_angles[0] - rand_angles[2]) <= GA.DIFF_ANGLE or
-            abs(rand_angles[1] - rand_angles[2]) <= GA.DIFF_ANGLE or
-         self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
+      diff_bool = False
+      num_angles = len(rand_angles)
+      for i in range(1, num_angles):
+         if abs(rand_angles[0] - rand_angles[i]) <= GA.DIFF_ANGLE:
+            diff_bool = True
+            break
+      if abs(rand_angles[1] - rand_angles[num_angles - 1]) <= GA.DIFF_ANGLE:
+         diff_bool = True
+
+      while(diff_bool or self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
          rand_angles = self.gen_pairs(cir)
          formattedRandAngles = self.convertFitPolygon(rand_angles)
-      vertz = []
+
+      verts = []
       for i in range(0, len(rand_angles)):
-         vertz.append([rand_angles[i],self.RADIUS])
-      return vertz
+         verts.append([rand_angles[i],self.RADIUS])
+      return verts
 
    def gen_pairs(self, angle):
       pairs = []

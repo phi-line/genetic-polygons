@@ -16,7 +16,7 @@ class GUI(tk.Canvas):
         tk.Canvas.__init__(self, master=master, width=self.win_x, height=self.win_y, borderwidth=0, highlightthickness=0, bg="white")
         self.pack()
 
-    def display_individual(self,dataset):
+    def display_individual(self,dataset, num_gen):
         tk.Canvas.delete(self,"all")
         individual=[]
         for coord in dataset[0]:
@@ -27,22 +27,25 @@ class GUI(tk.Canvas):
         dataset[1] = round(dataset[1], 5)
         dataset[1] = str(dataset[1]) + "%"
         self.create_text(self.canvas_origin_x, self.canvas_origin_y, fill='black', text=dataset[1])
+        self.create_text(self.canvas_origin_x, self.canvas_origin_y - 20, fill='black', text="GEN: {}".format(num_gen))
 
         tk.Canvas.update_idletasks(self)
         tk.Canvas.update(self)
 
     def draw_polygon(self, individual):
         fix_A = individual[0] - 90
-        A = [individual[0], individual[1]]
-        A = self.convert_to_canvas_coords(A, fix_A)
+        converted_coords = []
+        for i in range(1,len(individual),2):
+            vert = self.convert_to_canvas_coords([individual[i-1], individual[i]], fix_A)
+            converted_coords.extend(vert)
 
-        B = [individual[2], individual[3]]
-        B = self.convert_to_canvas_coords(B, fix_A)
-
-        C = [individual[4], individual[5]]
-        C = self.convert_to_canvas_coords(C, fix_A)
-
-        converted_coords = [A[0], A[1], B[0], B[1], C[0], C[1]]
+        # A = [individual[0], individual[1]]
+        # A = self.convert_to_canvas_coords(A, fix_A)
+        # B = [individual[2], individual[3]]
+        # B = self.convert_to_canvas_coords(B, fix_A)
+        # C = [individual[4], individual[5]]
+        # C = self.convert_to_canvas_coords(C, fix_A)
+        # converted_coords = [A[0], A[1], B[0], B[1], C[0], C[1]]
 
         self.create_circle(self.canvas_origin_x, self.canvas_origin_y, self.std_rad, fill="white", outline="#000",width=2)
         self.create_polygon(converted_coords, outline='red', fill='white', width=2)

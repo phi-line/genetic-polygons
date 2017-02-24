@@ -8,7 +8,7 @@ from random import *
 import time
 
 DELAY = 0.01
-DEMO = False
+DEMO = True
 
 def runGA(demo = False):
    '''
@@ -19,7 +19,7 @@ def runGA(demo = False):
    gui = GUI(tk.Tk())
 
    seed()
-   ga = GA()
+   ga = GA(verts=6)
 
    p = ga.pop(100)
    p = ga.selection(p)
@@ -30,14 +30,14 @@ def runGA(demo = False):
    count = 0
    exptime = 10000
    while (count <= exptime):
-      if(ga.best_polygon[3] > .0001/100.0):
+      if(ga.best_polygon[len(ga.best_polygon)-1] > .0001/100.0):
          #print(count)
          p = ga.selection(p)
          p = ga.propagate_gen(p)
          count += 1
          #print(ga.convertPolygon(ga.best_polygon))
          if(demo):
-            gui.display_individual(ga.convertPolygon(ga.best_polygon))
+            gui.display_individual(ga.convertPolygon(ga.best_polygon), count)
             #time.sleep(DELAY)
       else:
          if(not demo):
