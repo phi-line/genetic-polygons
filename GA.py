@@ -15,17 +15,22 @@ class GA:
    BAD_SAMPLE_RATE = 0.8
    DIFF_ANGLE = 0.5
 
-   def __init__(self):
+   def __init__(self, verts = 3):
       self.gen_count = 1
       self.current_gen = []
       self.best_polygon = []
       self.best_fitness = 0
+      self.verts = verts
 
    @staticmethod
    def convertFitPolygon(simplyPolygon):
-      return [ [simplyPolygon[0], GA.RADIUS],
-               [simplyPolygon[1], GA.RADIUS],
-               [simplyPolygon[2], GA.RADIUS] ]
+      lst = []
+      for i in range(0, len(simplyPolygon)):
+         lst.append([simplyPolygon[i], GA.RADIUS])
+      return lst
+      # return [ [simplyPolygon[0], GA.RADIUS],
+      #          [simplyPolygon[1], GA.RADIUS],
+      #          [simplyPolygon[2], GA.RADIUS] ]
 
    def polygon(self):
       '''
@@ -33,23 +38,25 @@ class GA:
       :return: list[ [0,R], [0,R], [0,R]
       '''
       cir = 360.0
-      rand_angles = GA.gen_pairs(cir)
+      rand_angles = self.gen_pairs(cir)
       formattedRandAngles = GA.convertFitPolygon(rand_angles)
 
       while(abs(rand_angles[0] - rand_angles[1]) <= GA.DIFF_ANGLE or
             abs(rand_angles[0] - rand_angles[2]) <= GA.DIFF_ANGLE or
             abs(rand_angles[1] - rand_angles[2]) <= GA.DIFF_ANGLE or
          self.fitness(formattedRandAngles) < self.BAD_SAMPLE_RATE):
-         rand_angles = GA.gen_pairs(cir)
-         formattedRandAngles = GA.convertFitPolygon(rand_angles)
+         rand_angles = self.gen_pairs(cir)
+         formattedRandAngles = self.convertFitPolygon(rand_angles)
       vertz = []
       for i in range(0, len(rand_angles)):
          vertz.append([rand_angles[i],self.RADIUS])
       return vertz
 
-   @staticmethod
-   def gen_pairs(angle):
-      pairs = [uniform(0, angle), uniform(0, angle), uniform(0, angle)]
+   def gen_pairs(self, angle):
+      pairs = []
+      for i in range(0, self.verts):
+         pairs.append(uniform(0, angle))
+      # pairs = [uniform(0, angle), uniform(0, angle), uniform(0, angle)]
       for i in range(0, len(pairs)):
          pairs[i] = round(pairs[i],GA.DEG_SIG)
       pairs.sort()
@@ -70,46 +77,32 @@ class GA:
          return abs(360 - diff)
       return diff
 
-   @staticmethod
-   def fitness(polygon):
+   def fitness(self, polygon):
       '''
       returns a fitness for an polygon
       :param polygon:
       :return:
       '''
       poly = deepcopy(polygon)
-
-      #thetaA = poly[0][0]+(360-poly[2][0])
-      #thetaB = poly[1][0] - poly[0][0]
-      #thetaC = poly[2][0] - poly[1][0]
-
-      thetaA = GA.diffAngle(poly[0][0], poly[2][0])
-      thetaB = GA.diffAngle(poly[1][0], poly[0][0])
-      thetaC = GA.diffAngle(poly[2][0], poly[1][0])
-
-      thetaA = abs(thetaA - 120)
-      thetaB = abs(thetaB - 120)
-      thetaC = abs(thetaC - 120)
-      angle_sum = thetaA + thetaB + thetaC
+      thetaLst = []
+      for i in range (0, self.verts):
+         j = i - 1
+         if j == -1:
+            j = self.verts - 1
+         thetaLst.append(self.diffAngle(poly[i][0], poly[j][0]))
+      # thetaA = GA.diffAngle(poly[0][0], poly[2][0])
+      # thetaB = GA.diffAngle(poly[1][0], poly[0][0])
+      # thetaC = GA.diffAngle(poly[2][0], poly[1][0])
+      angle_sum = 0
+      for i in range(len(thetaLst)):
+         angle_sum += abs(thetaLst[i] - 360.0/self.verts)
+      # thetaA = abs(thetaA - 120)
+      # thetaB = abs(thetaB - 120)
+      # thetaC = abs(thetaC - 120)
+      # angle_sum = thetaA + thetaB + thetaC
       angle_sum = angle_sum/360.0
 
-      '''
-      coordA = GA.convert_to_canvas_coords(poly[0])
-      coordB = GA.convert_to_canvas_coords(poly[1])
-      coordC = GA.convert_to_canvas_coords(poly[2])
-
-      AB = GA.mag(coordA[0], coordB[0], coordA[1], coordB[1])
-      BC = GA.mag(coordB[0], coordC[0], coordB[1], coordC[1])
-      CA = GA.mag(coordC[0], coordA[0], coordC[1], coordA[1])
-      side_list = sorted([AB, BC, CA], reverse=True)
-      '''
-      #side_avg = 1 - (side_list[1] + side_list[2]) / (2 * side_list[0])
-
-      #total_sum =round(side_avg * 1.0 +
-       #                 angle_sum * 0.9, GA.FIT_SIG)
-
       return round(angle_sum, GA.FIT_SIG)
-      #return total_sum
 
    @staticmethod
    def convert_to_canvas_coords(coord):
@@ -131,9 +124,17 @@ class GA:
       numElem = len(pop)
       for i in range(0, numElem):
          fitVal = self.fitness(pop[i])
-         pop[i] = [pop[i][0], pop[i][1], pop[i][2], fitVal]
+         popLen = len(pop[i])
+         print(pop[i])
+         if popLen == self.verts:
+            pop[i].append(fitVal)
+         else:
+            pop[i][self.verts] = fitVal
+         print(pop[i])
+         print("\n")
+         # pop[i] = [pop[i][0], pop[i][1], pop[i][2], fitVal]
 
-      return sorted(pop, key = itemgetter(3))
+      return sorted(pop, key = itemgetter(self.verts))
 
    def propagate_gen(self, pop):
       '''
@@ -160,8 +161,7 @@ class GA:
       self.best_fitness = new_pop[0][len(new_pop[0]) - 1]
       return new_pop
 
-   @staticmethod
-   def splice_polygon(polygonA, polygonB):
+   def splice_polygon(self, polygonA, polygonB):
       new_polygon = deepcopy(polygonA)
       pairs_len = len(new_polygon) - 1
       setA = set()
@@ -169,14 +169,14 @@ class GA:
          setA.add(i)
       index = sample(setA, pairs_len)
       # needs to be dynamic
-      count = int(len(new_polygon)/2) # 3
-      for i in range(0, pairs_len - count):
+      count = int(len(new_polygon) / 2)
+      for i in range(0, 2):
          new_polygon[i][0] = polygonA[index[i]][0]
-      for i in range(0, count):
+      for i in range(2, 3):
          new_polygon[i][0] = polygonB[index[i]][0]
       # sorts pairs and recomputes fitness
-      GA.sortPairs(new_polygon)
-      new_polygon[pairs_len] = GA.fitness(new_polygon)
+      self.sortPairs(new_polygon)
+      new_polygon[pairs_len] = self.fitness(new_polygon)
       return new_polygon
 
    @staticmethod
@@ -185,11 +185,10 @@ class GA:
 
    @staticmethod
    def getFitness(gen):
-      return gen[0][3]
+      return gen[0][len(gen[0]) - 1]
 
-   @staticmethod
-   def sortByFitness(gen):
-      return sorted(gen, key = itemgetter(3))
+   def sortByFitness(self, gen):
+      return sorted(gen, key = itemgetter(self.verts))
 
    @staticmethod
    def sortPairs(polygon):
@@ -202,9 +201,15 @@ class GA:
          polygon[i] = pairs[i]
       return polygon
 
-   @staticmethod
-   def convertPolygon(polygon):
-      return [[polygon[0], polygon[1], polygon[2]], polygon[3]]
+   def convertPolygon(self, polygon):
+      pairsLst = []
+      for i in range(0, self.verts - 1):
+         pairsLst.append(polygon[i])
+      polyLst = []
+      polyLst.append(pairsLst)
+      polyLst.append(polygon[self.verts - 1])
+      return polyLst
+      # return [[polygon[0], polygon[1], polygon[2]], polygon[3]]
 
    def mutation(self, gen):
       infect_rate = uniform(0,self.MUTATION_RATE)
