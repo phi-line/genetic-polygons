@@ -21,7 +21,7 @@ def runGA(demo = False):
    seed()
    ga = GA()
 
-   p = ga.pop(5)
+   p = ga.pop(20)
    p = ga.selection(p)
    p = ga.propagate_gen(p)
 
@@ -30,12 +30,13 @@ def runGA(demo = False):
    count = 0
    exptime = 10000
    while (count <= exptime):
-      if(ga.best_polygon[3] > 2.0/100.0):
+      if(ga.best_polygon[3] > .001/100.0):
          #print(count)
          p = ga.selection(p)
          p = ga.propagate_gen(p)
          count += 1
          if(demo):
+            print(ga.convertPolygon(ga.best_polygon))
             gui.display_individual(ga.convertPolygon(ga.best_polygon))
             time.sleep(DELAY)
       else:

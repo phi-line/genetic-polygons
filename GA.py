@@ -7,13 +7,13 @@ from math import *
 
 class GA:
    RADIUS = 1
-   DEG_SIG = 5
-   FIT_SIG = 5
+   DEG_SIG = 15
+   FIT_SIG = 15
    DO_MUTATE = True
    MUTATION_RATE = .15  # rate in which pop will be mutated
    MUTATION_AMT = 5.0  # +/- random range for mutation
    BAD_SAMPLE_RATE = 0.8
-   DIFF_ANGLE = 0.5
+   DIFF_ANGLE = 0.005
 
    def __init__(self, verts = 3):
       self.gen_count = 1
@@ -125,13 +125,10 @@ class GA:
       for i in range(0, numElem):
          fitVal = self.fitness(pop[i])
          popLen = len(pop[i])
-         print(pop[i])
          if popLen == self.verts:
             pop[i].append(fitVal)
          else:
             pop[i][self.verts] = fitVal
-         print(pop[i])
-         print("\n")
          # pop[i] = [pop[i][0], pop[i][1], pop[i][2], fitVal]
 
       return sorted(pop, key = itemgetter(self.verts))
@@ -170,9 +167,9 @@ class GA:
       index = sample(setA, pairs_len)
       # needs to be dynamic
       count = int(len(new_polygon) / 2)
-      for i in range(0, 2):
+      for i in range(0, count):
          new_polygon[i][0] = polygonA[index[i]][0]
-      for i in range(2, 3):
+      for i in range(count, pairs_len):
          new_polygon[i][0] = polygonB[index[i]][0]
       # sorts pairs and recomputes fitness
       self.sortPairs(new_polygon)
@@ -203,11 +200,11 @@ class GA:
 
    def convertPolygon(self, polygon):
       pairsLst = []
-      for i in range(0, self.verts - 1):
+      for i in range(0, self.verts):
          pairsLst.append(polygon[i])
       polyLst = []
       polyLst.append(pairsLst)
-      polyLst.append(polygon[self.verts - 1])
+      polyLst.append(polygon[self.verts])
       return polyLst
       # return [[polygon[0], polygon[1], polygon[2]], polygon[3]]
 
