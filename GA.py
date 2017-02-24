@@ -11,7 +11,7 @@ class GA:
    FIT_SIG = 15
    DO_MUTATE = True
    MUTATION_RATE = .15  # rate in which pop will be mutated
-   MUTATION_AMT = 5.0  # +/- random range for mutation
+   MUTATION_AMT = .05  # +/- random range for mutation
    BAD_SAMPLE_RATE = 0.8
    DIFF_ANGLE = 0.005
 
@@ -219,7 +219,8 @@ class GA:
       pairs_len = len(polygon) - 1
       for i in range (0, pairs_len):
          index = randrange(0, pairs_len)
-         polygon[index][0] += uniform(-self.MUTATION_AMT, self.MUTATION_AMT)
+         mutate = round(uniform(-self.MUTATION_AMT, self.MUTATION_AMT),GA.DEG_SIG)
+         polygon[index][0] += mutate
          if polygon[index][0] >= 360:
             polygon[index][0] -= 360
          elif polygon[index][0] < 0:

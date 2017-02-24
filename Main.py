@@ -8,7 +8,7 @@ from random import *
 import time
 
 DELAY = 0.01
-DEMO = True
+DEMO = False
 
 def runGA(demo = False):
    '''
@@ -21,7 +21,7 @@ def runGA(demo = False):
    seed()
    ga = GA()
 
-   p = ga.pop(20)
+   p = ga.pop(100)
    p = ga.selection(p)
    p = ga.propagate_gen(p)
 
@@ -30,15 +30,15 @@ def runGA(demo = False):
    count = 0
    exptime = 10000
    while (count <= exptime):
-      if(ga.best_polygon[3] > .001/100.0):
+      if(ga.best_polygon[3] > .0001/100.0):
          #print(count)
          p = ga.selection(p)
          p = ga.propagate_gen(p)
          count += 1
+         #print(ga.convertPolygon(ga.best_polygon))
          if(demo):
-            print(ga.convertPolygon(ga.best_polygon))
             gui.display_individual(ga.convertPolygon(ga.best_polygon))
-            time.sleep(DELAY)
+            #time.sleep(DELAY)
       else:
          if(not demo):
             break
@@ -54,15 +54,16 @@ def main():
       avgTime = 0.0
       avgError = 0.0
       run = 10
+      SIG = 15
       for i in range(0, run):
          res = runGA(False)
          timeSpent = res[0] + res[1] * DELAY
          avgTime += timeSpent
          avgError += res[2]*100.0
-         print("time spent(s):", round(timeSpent, 2))
-         print("error:", round(res[2]*100.0, 2), "%")
-      print("average time(s):", round(avgTime/run, 2))
-      print("average error:", round(avgError/run, 2), "%")
+         print("time spent(s):", round(timeSpent, 5))
+         print("error:", round(res[2]*100.0*1000000, SIG), "%*10^-6")
+      print("average time(s):", round(avgTime/run, 5))
+      print("average error:", round(avgError/run, SIG), "%")
 
 
 main()
