@@ -10,8 +10,8 @@ class GA:
    DEG_SIG = 15
    FIT_SIG = 15
    DO_MUTATE = True
-   MUTATION_RATE = .15  # rate in which pop will be mutated
-   MUTATION_AMT = .05  # +/- random range for mutation
+   MUTATION_RATE = .25  # rate in which pop will be mutated
+   MUTATION_AMT = .1  # +/- random range for mutation
    BAD_SAMPLE_RATE = 0.95
    DIFF_ANGLE = 0.005
 
@@ -28,9 +28,6 @@ class GA:
       for i in range(0, len(simplyPolygon)):
          lst.append([simplyPolygon[i], GA.RADIUS])
       return lst
-      # return [ [simplyPolygon[0], GA.RADIUS],
-      #          [simplyPolygon[1], GA.RADIUS],
-      #          [simplyPolygon[2], GA.RADIUS] ]
 
    def polygon(self):
       '''
@@ -97,16 +94,9 @@ class GA:
          if j == -1:
             j = self.verts - 1
          thetaLst.append(self.diffAngle(poly[i][0], poly[j][0]))
-      # thetaA = GA.diffAngle(poly[0][0], poly[2][0])
-      # thetaB = GA.diffAngle(poly[1][0], poly[0][0])
-      # thetaC = GA.diffAngle(poly[2][0], poly[1][0])
       angle_sum = 0
       for i in range(len(thetaLst)):
          angle_sum += abs(thetaLst[i] - 360.0/self.verts)
-      # thetaA = abs(thetaA - 120)
-      # thetaB = abs(thetaB - 120)
-      # thetaC = abs(thetaC - 120)
-      # angle_sum = thetaA + thetaB + thetaC
       angle_sum = angle_sum/360.0
 
       return round(angle_sum, GA.FIT_SIG)

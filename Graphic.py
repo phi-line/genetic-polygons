@@ -7,11 +7,11 @@ class GUI(tk.Canvas):
         gui = GUI(tkinter.Tk()
     '''
     def __init__(self,master,*args,**kwargs):
-        self.win_x = 800
-        self.win_y = 800
+        self.win_x = 300
+        self.win_y = 300
         self.canvas_origin_x = (self.win_x / 2)
         self.canvas_origin_y = (self.win_y / 2)
-        self.std_rad = 200*2
+        self.std_rad = 140
 
         tk.Canvas.__init__(self, master=master, width=self.win_x, height=self.win_y, borderwidth=0, highlightthickness=0, bg="white")
         self.pack()
