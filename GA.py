@@ -223,5 +223,3 @@ class GA:
          elif polygon[index][0] < 0:
             polygon[index][0] += 360
       return GA.sortPairs(polygon)
-
-

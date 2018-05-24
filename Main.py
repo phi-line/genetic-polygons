@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import sys
+from argparse import ArgumentParser
 
 import math
 import tkinter as tk
@@ -10,7 +12,7 @@ import time
 DELAY = 0.01
 DEMO = True
 
-def runGA(demo = False):
+def runGA(verts, population, demo = False):
    '''
    test code for genetic algo
    :return:
@@ -19,7 +21,7 @@ def runGA(demo = False):
    gui = GUI(tk.Tk())
 
    seed()
-   ga = GA(verts=6)
+   ga = GA(verts=verts)
 
    p = ga.pop(100)
    p = ga.selection(p)
@@ -38,7 +40,7 @@ def runGA(demo = False):
          #print(ga.convertPolygon(ga.best_polygon))
          if(DEMO):
             gui.display_individual(ga.convertPolygon(ga.best_polygon), count)
-            #time.sleep(DELAY)
+            time.sleep(DELAY)
       else:
          if not DEMO:
             break
@@ -46,9 +48,9 @@ def runGA(demo = False):
    return [ (time.time() - t), count, ga.best_fitness]
 
 
-def main():
+def main(verts=3, population=10):
    if(DEMO):
-      runGA(True)
+      runGA(verts, population, True)
 
    else:
       avgTime = 0.0
@@ -66,4 +68,12 @@ def main():
       print("average error:", round(avgError/run, SIG), "%")
 
 
-main()
+if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument("-v", "--verts", dest="verts", type=int,
+                        help="How many vertices should each generation run")
+    parser.add_argument("-p", "--population", dest="population", type=int,
+                        help="What population should each generation contain")
+
+    args = vars(parser.parse_args())
+    main(verts=args['verts'], population=args['population'])
