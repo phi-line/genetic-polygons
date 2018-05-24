@@ -4,12 +4,12 @@ from argparse import ArgumentParser
 
 import math
 import tkinter as tk
-from Graphic import GUI
+from graphic import GUI
 from GA import GA
 from random import *
 import time
 
-DELAY = 0.01
+DELAY = 1
 DEMO = True
 
 def runGA(verts, population, demo = False):
@@ -17,30 +17,33 @@ def runGA(verts, population, demo = False):
    test code for genetic algo
    :return:
    '''
+   # time.sleep(1000)
 
    gui = GUI(tk.Tk())
 
    seed()
    ga = GA(verts=verts)
 
-   p = ga.pop(100)
+   p = ga.pop(population)
    p = ga.selection(p)
    p = ga.propagate_gen(p)
 
    t = time.time()
 
-   count = 0
+   count = 1
    exptime = 10000
    while (count <= exptime):
       if(ga.best_polygon[len(ga.best_polygon)-1] > .01):
          #print(count)
          p = ga.selection(p)
          p = ga.propagate_gen(p)
-         count += 1
-         #print(ga.convertPolygon(ga.best_polygon))
+         # print(ga.convertPolygon(ga.best_polygon))
          if(DEMO):
             gui.display_individual(ga.convertPolygon(ga.best_polygon), count)
-            time.sleep(DELAY)
+            if count is 1:
+                time.sleep(5)
+            time.sleep(DELAY / count)
+         count += 1
       else:
          if not DEMO:
             break
@@ -48,7 +51,12 @@ def runGA(verts, population, demo = False):
    return [ (time.time() - t), count, ga.best_fitness]
 
 
-def main(verts=3, population=10):
+def main(verts=None, population=None):
+   if verts is None:
+       verts = 3
+   if population is None:
+       population = 50
+
    if(DEMO):
       runGA(verts, population, True)
 
@@ -70,9 +78,9 @@ def main(verts=3, population=10):
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument("-v", "--verts", dest="verts", type=int,
+    parser.add_argument("-v", "--verts", dest="verts", nargs='?', const=3, type=int,
                         help="How many vertices should each generation run")
-    parser.add_argument("-p", "--population", dest="population", type=int,
+    parser.add_argument("-p", "--population", dest="population", nargs='?', const=50, type=int,
                         help="What population should each generation contain")
 
     args = vars(parser.parse_args())

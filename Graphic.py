@@ -47,7 +47,7 @@ class GUI(tk.Canvas):
         # C = self.convert_to_canvas_coords(C, fix_A)
         # converted_coords = [A[0], A[1], B[0], B[1], C[0], C[1]]
 
-        self.create_circle(self.canvas_origin_x, self.canvas_origin_y, self.std_rad, fill="white", outline="#000",width=2)
+        self.create_circle(self.canvas_origin_x, self.canvas_origin_y, self.std_rad, fill="white", outline="#000",width=3)
         self.create_polygon(converted_coords, outline='red', fill='white', width=2)
 
         tk.Canvas.update_idletasks(self)

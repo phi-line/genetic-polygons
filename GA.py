@@ -10,9 +10,9 @@ class GA:
    DEG_SIG = 15
    FIT_SIG = 15
    DO_MUTATE = True
-   MUTATION_RATE = .25  # rate in which pop will be mutated
-   MUTATION_AMT = .1  # +/- random range for mutation
-   BAD_SAMPLE_RATE = 0.95
+   MUTATION_RATE = .1  # rate in which pop will be mutated
+   MUTATION_AMT = .2  # +/- random range for mutation
+   BAD_SAMPLE_RATE = 0.60
    DIFF_ANGLE = 0.005
 
    def __init__(self, verts = 3):
