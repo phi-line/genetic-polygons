@@ -11,7 +11,7 @@ An animation of a single run can be viewed, or a timing run can be used to analy
 
 |  **3 vertices**  |  **4 vertices**  |  **6 vertices**  |
 |:---:|:---:|:---:|
-| ![3 vertices](docs/3verts.gif) | ![4 vertices](docs/4verts.gif) | ![6 vertices](hdocs/6verts.gif) |
+| ![3 vertices](docs/3verts.gif) | ![4 vertices](docs/4verts.gif) | ![6 vertices](docs/6verts.gif) |
 
 ## How to use it
 
