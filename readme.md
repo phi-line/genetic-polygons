@@ -1,6 +1,6 @@
 # Genetic polygons
 
-Made by [Kishan Emens](https://github.com/phi-line), [Rix Lai](https://github.com/rixktl), and [Joshua Kuehn](https://github.com/joshuakuehn)
+Made by [Kishan Emens](https://github.com/phi-line), [Rix Lai](https://github.com/rixktl), [Jessica Sendejo](https://github.com/ItsJes), and [Joshua Kuehn](https://github.com/joshuakuehn)
 
 Made for OwlHacks Winter 2017 at Foothill College
 
